@@ -89,16 +89,17 @@ local redzlib = {
 		},
 		Darkones = {
 			["Color Hub 1"] = ColorSequence.new({
-				ColorSequenceKeypoint.new(0.00, Color3.fromRGB(0, 0, 0)),
-				ColorSequenceKeypoint.new(0.50, Color3.fromRGB(6, 6, 6)),
-				ColorSequenceKeypoint.new(1.00, Color3.fromRGB(0, 0, 0))
+				ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 105, 180)),
+				ColorSequenceKeypoint.new(0.50, Color3.fromRGB(70, 15, 45)),
+				ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 105, 180))
 			}),
-			["Color Hub 2"] = Color3.fromRGB(0, 0, 0),
-			["Color Stroke"] = Color3.fromRGB(55, 55, 60),
-			["Color Theme"] = Color3.fromRGB(20, 140, 255),
-			["Color Text"] = Color3.fromRGB(120, 255, 120),
-			["Color Dark Text"] = Color3.fromRGB(255, 225, 60),
-			["Color Bubble"] = Color3.fromRGB(170, 70, 255)
+			["Color Hub 2"] = Color3.fromRGB(35, 10, 22),
+			["Color Stroke"] = Color3.fromRGB(255, 110, 185),
+			["Color Edge"] = Color3.fromRGB(255, 110, 185),
+			["Color Theme"] = Color3.fromRGB(210, 170, 255),
+			["Color Text"] = Color3.fromRGB(150, 255, 150),
+			["Color Dark Text"] = Color3.fromRGB(255, 235, 140),
+			["Color Bubble"] = Color3.fromRGB(255, 110, 185)
 		}
 	},
 	Info = {
@@ -385,6 +386,30 @@ local function CreateTween(Configs)
 	return Tween
 end
 
+local function AddTextShine(Label, BaseColor, SweepTime, GapTime)
+	local Shine = Create("UIGradient", Label, {
+		Rotation = 15,
+		Color = ColorSequence.new({
+			ColorSequenceKeypoint.new(0.00, BaseColor),
+			ColorSequenceKeypoint.new(0.42, BaseColor),
+			ColorSequenceKeypoint.new(0.50, Color3.fromRGB(255, 255, 255)),
+			ColorSequenceKeypoint.new(0.58, BaseColor),
+			ColorSequenceKeypoint.new(1.00, BaseColor)
+		}),
+		Offset = Vector2.new(-1.5, 0)
+	})
+
+	task.spawn(function()
+		while Label and Label.Parent do
+			Shine.Offset = Vector2.new(-1.5, 0)
+			CreateTween({Shine, "Offset", Vector2.new(1.5, 0), SweepTime or 1.3})
+			task.wait((SweepTime or 1.3) + (GapTime or 2.2))
+		end
+	end)
+
+	return Shine
+end
+
 local function MakeDrag(Instance)
 	task.spawn(function()
 		SetProps(Instance, {
@@ -643,6 +668,8 @@ function redzlib:SetTheme(NewTheme)
 			Val.Instance.BackgroundColor3 = Theme["Color Hub 2"]
 		elseif Val.Type == "Stroke" then
 			Val.Instance[GetColor(Val.Instance)] = Theme["Color Stroke"]
+		elseif Val.Type == "Edge" then
+			Val.Instance[GetColor(Val.Instance)] = Theme["Color Edge"]
 		elseif Val.Type == "Theme" then
 			Val.Instance[GetColor(Val.Instance)] = Theme["Color Theme"]
 		elseif Val.Type == "Text" then
@@ -819,7 +846,7 @@ function redzlib:MakeWindow(Configs)
 	local MainFrame = InsertTheme(Create("ImageButton", ScreenGui, {
 		Size = UDim2.fromOffset(UISizeX, UISizeY),
 		Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
-		BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+		BackgroundColor3 = Color3.fromRGB(255, 105, 180),
 		BackgroundTransparency = 0.55,
 		Name = "Hub"
 }), "Main")
@@ -833,10 +860,37 @@ function redzlib:MakeWindow(Configs)
 	})MakeDrag(MainFrame)
 	local MainCorner = Make("Corner", MainFrame, UDim.new(0, 18))
 	local MainStroke = InsertTheme(Create("UIStroke", MainFrame, {
-		Color = Theme["Color Theme"],
+		Color = Theme["Color Edge"],
 		Thickness = 1.5,
 		ApplyStrokeMode = "Border"
-	}), "Theme")
+	}), "Edge")
+	local GlassShine = Create("Frame", MainFrame, {
+		Size = UDim2.fromScale(1, 1),
+		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		ZIndex = 50
+	})
+	Make("Corner", GlassShine, UDim.new(0, 18))
+	local GlassShineGradient = Create("UIGradient", GlassShine, {
+		Rotation = 35,
+		Color = ColorSequence.new(Color3.fromRGB(255, 255, 255)),
+		Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0.00, 1),
+			NumberSequenceKeypoint.new(0.42, 1),
+			NumberSequenceKeypoint.new(0.50, 0.55),
+			NumberSequenceKeypoint.new(0.58, 1),
+			NumberSequenceKeypoint.new(1.00, 1)
+		}),
+		Offset = Vector2.new(-1.4, 0)
+	})
+	task.spawn(function()
+		while GlassShine and GlassShine.Parent do
+			GlassShineGradient.Offset = Vector2.new(-1.4, 0)
+			CreateTween({GlassShineGradient, "Offset", Vector2.new(1.4, 0), 1.6})
+			task.wait(3.4)
+		end
+	end)
 	local Components = Create("Folder", MainFrame, {
 		Name = "Components"
 	})
@@ -878,6 +932,7 @@ function redzlib:MakeWindow(Configs)
 			Name = "SubTitle"
 		}), "DarkText")
 	}), "Theme")
+	AddTextShine(Title, Theme["Color Theme"], 1.3, 2.2)
 
 	local SidebarHeader = Create("Frame", Components, {
 		Size = UDim2.new(0, redzlib.Save.TabSize, 0, 20),
@@ -1471,11 +1526,11 @@ end
 		Make("Corner", TabSelect, UDim.new(0, 8))
 
 		local TabStroke = InsertTheme(Create("UIStroke", TabSelect, {
-			Color = Theme["Color Theme"],
+			Color = Theme["Color Edge"],
 			Thickness = 1,
 			Transparency = FirstTab and 0.6 or 0.1,
 			ApplyStrokeMode = "Border"
-		}), "Theme")
+		}), "Edge")
 
 		local TabBanner = InsertTheme(Create("ImageLabel", TabSelect, {
 			Size = UDim2.new(1, 0, 1, 0),
@@ -1645,6 +1700,7 @@ end
 				TextSize = 11,
 				TextXAlignment = "Left"
 			}), "Theme")
+			AddTextShine(SectionLabel, Theme["Color Theme"], 1.3, 2.6)
 
 			local Section = {}
 			table.insert(redzlib.Options, {type = "Section", Name = SectionName, func = Section})

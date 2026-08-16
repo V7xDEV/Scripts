@@ -89,16 +89,16 @@ local redzlib = {
 		},
 		Darkones = {
 			["Color Hub 1"] = ColorSequence.new({
-				ColorSequenceKeypoint.new(0.00, Color3.fromRGB(3, 3, 5)),
-				ColorSequenceKeypoint.new(0.50, Color3.fromRGB(10, 10, 14)),
-				ColorSequenceKeypoint.new(1.00, Color3.fromRGB(3, 3, 5))
+				ColorSequenceKeypoint.new(0.00, Color3.fromRGB(0, 0, 0)),
+				ColorSequenceKeypoint.new(0.50, Color3.fromRGB(6, 6, 6)),
+				ColorSequenceKeypoint.new(1.00, Color3.fromRGB(0, 0, 0))
 			}),
-			["Color Hub 2"] = Color3.fromRGB(6, 6, 8),
-			["Color Stroke"] = Color3.fromRGB(28, 28, 34),
-			["Color Theme"] = Color3.fromRGB(110, 80, 230),
-			["Color Text"] = Color3.fromRGB(235, 235, 240),
-			["Color Dark Text"] = Color3.fromRGB(130, 130, 140),
-			["Color Bubble"] = Color3.fromRGB(70, 50, 160)
+			["Color Hub 2"] = Color3.fromRGB(0, 0, 0),
+			["Color Stroke"] = Color3.fromRGB(55, 55, 60),
+			["Color Theme"] = Color3.fromRGB(170, 70, 255),
+			["Color Text"] = Color3.fromRGB(120, 255, 120),
+			["Color Dark Text"] = Color3.fromRGB(255, 225, 60),
+			["Color Bubble"] = Color3.fromRGB(170, 70, 255)
 		}
 	},
 	Info = {
@@ -819,24 +819,24 @@ function redzlib:MakeWindow(Configs)
 	local MainFrame = InsertTheme(Create("ImageButton", ScreenGui, {
 		Size = UDim2.fromOffset(UISizeX, UISizeY),
 		Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
-		BackgroundColor3 = Color3.fromRGB(60, 0, 0),
-		BackgroundTransparency = 0.55,
+		BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+		BackgroundTransparency = 0.05,
 		Name = "Hub"
 }), "Main")
 	Make("Gradient", MainFrame, {
 		Rotation = 45,
 		Transparency = NumberSequence.new({
-			NumberSequenceKeypoint.new(0.00, 0.15),
-			NumberSequenceKeypoint.new(0.50, 0.55),
-			NumberSequenceKeypoint.new(1.00, 0.15)
+			NumberSequenceKeypoint.new(0.00, 0.02),
+			NumberSequenceKeypoint.new(0.50, 0.1),
+			NumberSequenceKeypoint.new(1.00, 0.02)
 		})
 	})MakeDrag(MainFrame)
 	local MainCorner = Make("Corner", MainFrame, UDim.new(0, 18))
 	local MainStroke = InsertTheme(Create("UIStroke", MainFrame, {
-		Color = Theme["Color Theme"],
+		Color = Theme["Color Stroke"],
 		Thickness = 1.5,
 		ApplyStrokeMode = "Border"
-	}), "Theme")
+	}), "Stroke")
 	local Components = Create("Folder", MainFrame, {
 		Name = "Components"
 	})
@@ -949,7 +949,7 @@ local function CreateCyberpunkParticle()
 	local speed = math.random(ParticleConfig.ParticleSpeed.Min, ParticleConfig.ParticleSpeed.Max)
 
 	local particleColor = Theme["Color Bubble"] or Theme["Color Theme"]
-	local bodyTransparency = math.random(55, 75) / 100
+	local bodyTransparency = math.random(25, 45) / 100
 
 	local Particle = Create("Frame", ParticleContainer, {
 		Size = UDim2.fromOffset(size, size),
@@ -965,8 +965,8 @@ local function CreateCyberpunkParticle()
 
 	local Rim = Create("UIStroke", Particle, {
 		Color = particleColor,
-		Thickness = 1,
-		Transparency = 0.35,
+		Thickness = 1.25,
+		Transparency = 0.1,
 		ApplyStrokeMode = "Border"
 	})
 
@@ -974,7 +974,7 @@ local function CreateCyberpunkParticle()
 		Size = UDim2.fromScale(0.35, 0.35),
 		Position = UDim2.fromScale(0.28, 0.22),
 		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-		BackgroundTransparency = 0.55,
+		BackgroundTransparency = 0.4,
 		BorderSizePixel = 0
 	})
 	Create("UICorner", Highlight, {
@@ -986,7 +986,7 @@ local function CreateCyberpunkParticle()
 		Position = UDim2.new(0.5, 0, 0.5, 0),
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = particleColor,
-		BackgroundTransparency = 0.85,
+		BackgroundTransparency = 0.6,
 		ZIndex = -1
 	})
 
@@ -1012,8 +1012,8 @@ local function CreateCyberpunkParticle()
 	Glow.BackgroundTransparency = 1
 	Rim.Transparency = 1
 	CreateTween({Particle, "BackgroundTransparency", bodyTransparency, 0.8})
-	CreateTween({Glow, "BackgroundTransparency", 0.85, 0.8})
-	CreateTween({Rim, "Transparency", 0.35, 0.8})
+	CreateTween({Glow, "BackgroundTransparency", 0.6, 0.8})
+	CreateTween({Rim, "Transparency", 0.1, 0.8})
 
 	table.insert(ActiveParticles, ParticleData)
 end
@@ -1471,11 +1471,11 @@ end
 		Make("Corner", TabSelect, UDim.new(0, 8))
 
 		local TabStroke = InsertTheme(Create("UIStroke", TabSelect, {
-			Color = Theme["Color Theme"],
+			Color = Theme["Color Stroke"],
 			Thickness = 1,
 			Transparency = FirstTab and 0.6 or 0.1,
 			ApplyStrokeMode = "Border"
-		}), "Theme")
+		}), "Stroke")
 
 		local TabBanner = InsertTheme(Create("ImageLabel", TabSelect, {
 			Size = UDim2.new(1, 0, 1, 0),
@@ -3455,7 +3455,6 @@ end
 
 	CloseButton.Activated:Connect(Window.CloseBtn)
 	MinimizeButton.Activated:Connect(Window.MinimizeBtn)
-
 
 	Window:SetBackground("Particles")
 

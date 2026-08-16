@@ -95,7 +95,7 @@ local redzlib = {
 			}),
 			["Color Hub 2"] = Color3.fromRGB(0, 0, 0),
 			["Color Stroke"] = Color3.fromRGB(55, 55, 60),
-			["Color Theme"] = Color3.fromRGB(170, 70, 255),
+			["Color Theme"] = Color3.fromRGB(20, 140, 255),
 			["Color Text"] = Color3.fromRGB(120, 255, 120),
 			["Color Dark Text"] = Color3.fromRGB(255, 225, 60),
 			["Color Bubble"] = Color3.fromRGB(170, 70, 255)
@@ -820,23 +820,23 @@ function redzlib:MakeWindow(Configs)
 		Size = UDim2.fromOffset(UISizeX, UISizeY),
 		Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
 		BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-		BackgroundTransparency = 0.05,
+		BackgroundTransparency = 0.55,
 		Name = "Hub"
 }), "Main")
 	Make("Gradient", MainFrame, {
 		Rotation = 45,
 		Transparency = NumberSequence.new({
-			NumberSequenceKeypoint.new(0.00, 0.02),
-			NumberSequenceKeypoint.new(0.50, 0.1),
-			NumberSequenceKeypoint.new(1.00, 0.02)
+			NumberSequenceKeypoint.new(0.00, 0.15),
+			NumberSequenceKeypoint.new(0.50, 0.55),
+			NumberSequenceKeypoint.new(1.00, 0.15)
 		})
 	})MakeDrag(MainFrame)
 	local MainCorner = Make("Corner", MainFrame, UDim.new(0, 18))
 	local MainStroke = InsertTheme(Create("UIStroke", MainFrame, {
-		Color = Theme["Color Stroke"],
+		Color = Theme["Color Theme"],
 		Thickness = 1.5,
 		ApplyStrokeMode = "Border"
-	}), "Stroke")
+	}), "Theme")
 	local Components = Create("Folder", MainFrame, {
 		Name = "Components"
 	})
@@ -1471,11 +1471,11 @@ end
 		Make("Corner", TabSelect, UDim.new(0, 8))
 
 		local TabStroke = InsertTheme(Create("UIStroke", TabSelect, {
-			Color = Theme["Color Stroke"],
+			Color = Theme["Color Theme"],
 			Thickness = 1,
 			Transparency = FirstTab and 0.6 or 0.1,
 			ApplyStrokeMode = "Border"
-		}), "Stroke")
+		}), "Theme")
 
 		local TabBanner = InsertTheme(Create("ImageLabel", TabSelect, {
 			Size = UDim2.new(1, 0, 1, 0),

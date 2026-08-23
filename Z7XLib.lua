@@ -3489,7 +3489,7 @@ end
 			Name = "Background Transparency",
 			Min = 0,
 			Max = 100,
-			Increase = 5,
+			Increase = 100,
 			Default = math.floor(WindowBackground.BackgroundTransparency * 100),
 			Flag = "BackgroundTransparency",
 			Callback = function(value)
@@ -3540,7 +3540,7 @@ end
 
 		SettingsTab:AddToggle({
 			Name = "Stop Element Edges",
-			Desc = "Stop the edge outline on dropdowns, buttons, textboxes and other elements",
+			Desc = "Stop the edge outline on dropdowns buttons textboxes and other elements",
 			Default = false,
 			Flag = "StopElementEdges",
 			Callback = function(enabled)

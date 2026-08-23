@@ -866,6 +866,80 @@ function redzlib:MakeWindow(Configs)
 		BackgroundTransparency = 0.55,
 		Name = "Hub"
 }), "Main")
+local RunService = game:GetService("RunService")
+
+local imageUrl = "https://github.com/V7xDEV/Scripts/raw/refs/heads/main/backgroundZ7X.png"
+local fileName = "z7x_background_img.png"
+
+local function GetImage(url, name)
+	if not isfile(name) then
+		local success, data = pcall(function() return game:HttpGet(url) end)
+		if success and data then writefile(name, data) end
+	end
+	return getcustomasset(name)
+end
+
+local WindowBackground = Create("Frame", MainFrame, {
+	Name = "WindowBackground",
+	Size = UDim2.new(1, 0, 1, 0),
+	Position = UDim2.new(0, 0, 0, 0),
+	BackgroundColor3 = Color3.fromRGB(18, 8, 30),
+	BackgroundTransparency = 0,
+	ZIndex = 0
+})
+
+Make("Corner", WindowBackground)
+
+local ImageFrame = Instance.new("ImageLabel")
+ImageFrame.Name = "BackgroundImage"
+ImageFrame.Parent = WindowBackground
+ImageFrame.Size = UDim2.new(1, 0, 1, 0)
+ImageFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+ImageFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+ImageFrame.BackgroundTransparency = 1
+ImageFrame.ZIndex = 1
+
+Make("Corner", ImageFrame, UDim.new(0, 12))
+
+task.spawn(function()
+	local asset = GetImage(imageUrl, fileName)
+	if asset then
+		ImageFrame.Image = asset
+	end
+end)
+
+local BorderFrame = Instance.new("Frame")
+BorderFrame.Name = "BorderFrame"
+BorderFrame.Size = UDim2.new(1, -4, 1, -4)
+BorderFrame.Position = UDim2.new(0, 2, 0, 2)
+BorderFrame.BackgroundTransparency = 1
+BorderFrame.ZIndex = 3
+BorderFrame.Parent = WindowBackground
+
+Make("Corner", BorderFrame)
+
+local BorderStroke = Instance.new("UIStroke")
+BorderStroke.Thickness = 3
+BorderStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+BorderStroke.Color = Color3.fromRGB(255, 255, 255)
+BorderStroke.Parent = BorderFrame
+
+local BorderGradient = Instance.new("UIGradient")
+BorderGradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 0, 0)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 0))
+}
+BorderGradient.Rotation = 0
+BorderGradient.Parent = BorderStroke
+
+local borderSpeed = 50
+RunService.Heartbeat:Connect(function(dt)
+	if BorderGradient then
+		BorderGradient.Rotation = (BorderGradient.Rotation + borderSpeed * dt) % 360
+	end
+end)
+
 	Make("Gradient", MainFrame, {
 		Rotation = 45,
 		Transparency = NumberSequence.new({

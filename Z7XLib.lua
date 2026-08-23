@@ -897,9 +897,21 @@ ImageFrame.Size = UDim2.new(1, 0, 1, 0)
 ImageFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 ImageFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 ImageFrame.BackgroundTransparency = 1
+ImageFrame.ImageColor3 = Color3.fromRGB(120, 120, 120)
 ImageFrame.ZIndex = 1
 
 Make("Corner", ImageFrame, UDim.new(0, 12))
+
+local DarkOverlay = Instance.new("Frame")
+DarkOverlay.Name = "DarkOverlay"
+DarkOverlay.Size = UDim2.new(1, 0, 1, 0)
+DarkOverlay.Position = UDim2.new(0, 0, 0, 0)
+DarkOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+DarkOverlay.BackgroundTransparency = 0.45
+DarkOverlay.ZIndex = 2
+DarkOverlay.Parent = WindowBackground
+
+Make("Corner", DarkOverlay, UDim.new(0, 12))
 
 task.spawn(function()
 	local asset = GetImage(imageUrl, fileName)
@@ -910,16 +922,16 @@ end)
 
 local BorderFrame = Instance.new("Frame")
 BorderFrame.Name = "BorderFrame"
-BorderFrame.Size = UDim2.new(1, -4, 1, -4)
-BorderFrame.Position = UDim2.new(0, 2, 0, 2)
+BorderFrame.Size = UDim2.new(1, 0, 1, 0)
+BorderFrame.Position = UDim2.new(0, 0, 0, 0)
 BorderFrame.BackgroundTransparency = 1
-BorderFrame.ZIndex = 3
+BorderFrame.ZIndex = 4
 BorderFrame.Parent = WindowBackground
 
 Make("Corner", BorderFrame)
 
 local BorderStroke = Instance.new("UIStroke")
-BorderStroke.Thickness = 3
+BorderStroke.Thickness = 5
 BorderStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 BorderStroke.Color = Color3.fromRGB(255, 255, 255)
 BorderStroke.Parent = BorderFrame

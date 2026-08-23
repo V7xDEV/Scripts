@@ -100,6 +100,22 @@ local redzlib = {
 			["Color Text"] = Color3.fromRGB(150, 255, 150),
 			["Color Dark Text"] = Color3.fromRGB(255, 235, 140),
 			["Color Bubble"] = Color3.fromRGB(255, 110, 185)
+		},
+		Z7X = {
+			["Color Hub 1"] = ColorSequence.new({
+				ColorSequenceKeypoint.new(0.00, Color3.fromRGB(8, 4, 12)),
+				ColorSequenceKeypoint.new(0.50, Color3.fromRGB(18, 8, 22)),
+				ColorSequenceKeypoint.new(1.00, Color3.fromRGB(8, 4, 12))
+			}),
+			["Color Hub 2"] = Color3.fromRGB(6, 6, 8),
+			["Color Stroke"] = Color3.fromRGB(150, 30, 170),
+			["Color Edge"] = Color3.fromRGB(80, 255, 120),
+			["Color Theme"] = Color3.fromRGB(255, 20, 170),
+			["Color Text"] = Color3.fromRGB(248, 248, 248),
+			["Color Dark Text"] = Color3.fromRGB(205, 190, 215),
+			["Color Dark Purple"] = Color3.fromRGB(179, 0, 255),
+			["Color Dark Greem"] = Color3.fromRGB(80, 255, 120),
+			["Color Bubble"] = Color3.fromRGB(255, 45, 200)
 		}
 	},
 	Info = {
@@ -108,7 +124,7 @@ local redzlib = {
 	Save = {
 		UISize = {560, 380},
 		TabSize = 130,
-		Theme = "Darkones"
+		Theme = "Z7X"
 	},
 	Settings = {},
 	Connection = {},

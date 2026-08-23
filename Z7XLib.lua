@@ -3463,7 +3463,8 @@ end
 		local GlowStroke = Make("Stroke", MainFrame, {
 			Thickness = 2,
 			Color = Color3.fromRGB(0, 255, 0),
-			Transparency = 0
+			Transparency = 0,
+			ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
 		})
 
 		local GlowGradient = Instance.new("UIGradient")

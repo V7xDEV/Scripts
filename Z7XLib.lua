@@ -897,21 +897,10 @@ ImageFrame.Size = UDim2.new(1, 0, 1, 0)
 ImageFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 ImageFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 ImageFrame.BackgroundTransparency = 1
-ImageFrame.ImageColor3 = Color3.fromRGB(165, 165, 165)
+ImageFrame.ImageColor3 = Color3.fromRGB(255, 255, 255)
 ImageFrame.ZIndex = 1
 
 Make("Corner", ImageFrame, UDim.new(0, 12))
-
-local DarkOverlay = Instance.new("Frame")
-DarkOverlay.Name = "DarkOverlay"
-DarkOverlay.Size = UDim2.new(1, 0, 1, 0)
-DarkOverlay.Position = UDim2.new(0, 0, 0, 0)
-DarkOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-DarkOverlay.BackgroundTransparency = 0.65
-DarkOverlay.ZIndex = 2
-DarkOverlay.Parent = WindowBackground
-
-Make("Corner", DarkOverlay, UDim.new(0, 12))
 
 task.spawn(function()
 	local asset = GetImage(imageUrl, fileName)
@@ -3576,10 +3565,10 @@ end
 			end
 		end)
 
-		SettingsTab:AddToggle({
+	--[[	SettingsTab:AddToggle({
 			Name = "Glow Frame ",
 			Flag = "GlowMainFrame",
-			Default = true,
+			Default = false,
 			Callback = function(enabled)
 				glowFrameEnabled = enabled
 				GlowStroke.Transparency = enabled and 0 or 1
@@ -3592,7 +3581,7 @@ end
 			Default = false,
 			Callback = function(enabled)
 				glowTitleEnabled = enabled
-				if not enabled and Title then
+			--	if not enabled and Title then
 					Title.TextColor3 = Theme["Color Theme"]
 					local SubTitleLbl = Title:FindFirstChild("SubTitle")
 					if SubTitleLbl then
@@ -3601,7 +3590,7 @@ end
 				end
 			end
 		})
-
+--]] 
 		SettingsTab:AddSection({Name = "Background"})
 
 		SettingsTab:AddToggle({

@@ -3487,7 +3487,7 @@ end
 
 		SettingsTab:AddSlider({
 			Name = "Background Transparency",
-			Min = 0,
+			Min = 100,
 			Max = 100,
 			Increase = 100,
 			Default = math.floor(WindowBackground.BackgroundTransparency * 100),

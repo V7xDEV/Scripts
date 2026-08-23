@@ -586,7 +586,7 @@ local function ButtonFrame(Instance, Title, Description, HolderSize)
 		Size = UDim2.new(1, 0, 0, 25),
 		AutomaticSize = "Y",
 		Name = "Option"
-	})Make("Corner", Frame, UDim.new(0, 6))
+	})Make("Corner", Frame, UDim.new(0, 6))Make("Stroke", Frame)
 
 	LabelHolder = Create("Frame", Frame, {
 		AutomaticSize = "Y",
@@ -897,7 +897,7 @@ ImageFrame.Size = UDim2.new(1, 0, 1, 0)
 ImageFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 ImageFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 ImageFrame.BackgroundTransparency = 1
-ImageFrame.ImageColor3 = Color3.fromRGB(120, 120, 120)
+ImageFrame.ImageColor3 = Color3.fromRGB(165, 165, 165)
 ImageFrame.ZIndex = 1
 
 Make("Corner", ImageFrame, UDim.new(0, 12))
@@ -907,7 +907,7 @@ DarkOverlay.Name = "DarkOverlay"
 DarkOverlay.Size = UDim2.new(1, 0, 1, 0)
 DarkOverlay.Position = UDim2.new(0, 0, 0, 0)
 DarkOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-DarkOverlay.BackgroundTransparency = 0.45
+DarkOverlay.BackgroundTransparency = 0.65
 DarkOverlay.ZIndex = 2
 DarkOverlay.Parent = WindowBackground
 
@@ -946,8 +946,12 @@ BorderGradient.Rotation = 0
 BorderGradient.Parent = BorderStroke
 
 local borderSpeed = 50
+local borderColorEnabled = true
+local edgesVisible = true
+local bgImageEnabled = true
+
 RunService.Heartbeat:Connect(function(dt)
-	if BorderGradient then
+	if BorderGradient and borderColorEnabled then
 		BorderGradient.Rotation = (BorderGradient.Rotation + borderSpeed * dt) % 360
 	end
 end)
@@ -3595,6 +3599,61 @@ end
 						SubTitleLbl.TextColor3 = Theme["Color Dark Text"]
 					end
 				end
+			end
+		})
+
+		SettingsTab:AddSection({Name = "Background"})
+
+		SettingsTab:AddToggle({
+			Name = "Background Image",
+			Desc = "Show or hide the background image",
+			Default = true,
+			Flag = "BackgroundImageVisible",
+			Callback = function(enabled)
+				bgImageEnabled = enabled
+				ImageFrame.Visible = enabled
+				DarkOverlay.Visible = enabled
+			end
+		})
+
+		SettingsTab:AddToggle({
+			Name = "Stop Edge Coloring",
+			Desc = "Stop the animated color cycle on the outer edge",
+			Default = false,
+			Flag = "StopEdgeColoring",
+			Callback = function(enabled)
+				borderColorEnabled = not enabled
+				if enabled then
+					BorderGradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+				else
+					BorderGradient.Color = ColorSequence.new{
+						ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)),
+						ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 0, 0)),
+						ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 0))
+					}
+				end
+			end
+		})
+
+		SettingsTab:AddToggle({
+			Name = "Hide Edges",
+			Desc = "Hide or show the outer edge borders",
+			Default = false,
+			Flag = "HideEdges",
+			Callback = function(enabled)
+				edgesVisible = not enabled
+				BorderStroke.Transparency = enabled and 1 or 0
+				MainStroke.Transparency = enabled and 1 or 0
+			end
+		})
+
+		SettingsTab:AddToggle({
+			Name = "Stop Background Bubbles",
+			Desc = "Stop the floating particle bubbles",
+			Default = false,
+			Flag = "StopBubbles",
+			Callback = function(enabled)
+				Window:SetThemeParticles(not enabled)
 			end
 		})
 

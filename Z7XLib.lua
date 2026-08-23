@@ -586,7 +586,11 @@ local function ButtonFrame(Instance, Title, Description, HolderSize)
 		Size = UDim2.new(1, 0, 0, 25),
 		AutomaticSize = "Y",
 		Name = "Option"
-	})Make("Corner", Frame, UDim.new(0, 6))Make("Stroke", Frame)
+	})Make("Corner", Frame, UDim.new(0, 6))InsertTheme(Create("UIStroke", Frame, {
+		Color = Theme["Color Edge"],
+		Thickness = 1,
+		ApplyStrokeMode = "Border"
+	}), "Edge")
 
 	LabelHolder = Create("Frame", Frame, {
 		AutomaticSize = "Y",
@@ -897,10 +901,21 @@ ImageFrame.Size = UDim2.new(1, 0, 1, 0)
 ImageFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 ImageFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 ImageFrame.BackgroundTransparency = 1
-ImageFrame.ImageColor3 = Color3.fromRGB(255, 255, 255)
+ImageFrame.ImageColor3 = Color3.fromRGB(165, 165, 165)
 ImageFrame.ZIndex = 1
 
 Make("Corner", ImageFrame, UDim.new(0, 12))
+
+local DarkOverlay = Instance.new("Frame")
+DarkOverlay.Name = "DarkOverlay"
+DarkOverlay.Size = UDim2.new(1, 0, 1, 0)
+DarkOverlay.Position = UDim2.new(0, 0, 0, 0)
+DarkOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+DarkOverlay.BackgroundTransparency = 0.65
+DarkOverlay.ZIndex = 2
+DarkOverlay.Parent = WindowBackground
+
+Make("Corner", DarkOverlay, UDim.new(0, 12))
 
 task.spawn(function()
 	local asset = GetImage(imageUrl, fileName)
@@ -954,11 +969,6 @@ end)
 		})
 	})MakeDrag(MainFrame)
 	local MainCorner = Make("Corner", MainFrame, UDim.new(0, 18))
-	local MainStroke = InsertTheme(Create("UIStroke", MainFrame, {
-		Color = Theme["Color Edge"],
-		Thickness = 1.5,
-		ApplyStrokeMode = "Border"
-	}), "Edge")
 	local GlassShine = Create("Frame", MainFrame, {
 		Size = UDim2.fromScale(1, 1),
 		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -3565,10 +3575,10 @@ end
 			end
 		end)
 
-	--[[	SettingsTab:AddToggle({
+		SettingsTab:AddToggle({
 			Name = "Glow Frame ",
 			Flag = "GlowMainFrame",
-			Default = false,
+			Default = true,
 			Callback = function(enabled)
 				glowFrameEnabled = enabled
 				GlowStroke.Transparency = enabled and 0 or 1
@@ -3581,7 +3591,7 @@ end
 			Default = false,
 			Callback = function(enabled)
 				glowTitleEnabled = enabled
-			--	if not enabled and Title then
+				if not enabled and Title then
 					Title.TextColor3 = Theme["Color Theme"]
 					local SubTitleLbl = Title:FindFirstChild("SubTitle")
 					if SubTitleLbl then
@@ -3590,7 +3600,7 @@ end
 				end
 			end
 		})
---]] 
+
 		SettingsTab:AddSection({Name = "Background"})
 
 		SettingsTab:AddToggle({
@@ -3602,6 +3612,7 @@ end
 				bgImageEnabled = enabled
 				ImageFrame.Visible = enabled
 				DarkOverlay.Visible = enabled
+				WindowBackground.BackgroundTransparency = enabled and 0 or 0.75
 			end
 		})
 
@@ -3613,7 +3624,7 @@ end
 			Callback = function(enabled)
 				borderColorEnabled = not enabled
 				if enabled then
-					BorderGradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+					BorderGradient.Color = ColorSequence.new(Color3.fromRGB(0, 255, 0))
 				else
 					BorderGradient.Color = ColorSequence.new{
 						ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)),
@@ -3632,7 +3643,6 @@ end
 			Callback = function(enabled)
 				edgesVisible = not enabled
 				BorderStroke.Transparency = enabled and 1 or 0
-				MainStroke.Transparency = enabled and 1 or 0
 			end
 		})
 

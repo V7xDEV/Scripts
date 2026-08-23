@@ -552,6 +552,9 @@ AddEle("Gradient", function(parent, props, ...)
 	return New
 end)
 
+local ElementEdgeStrokes = {}
+local ElementEdgesEnabled = true
+
 local function ButtonFrame(Instance, Title, Description, HolderSize)
 	local TitleL = InsertTheme(Create("TextLabel", {
 		Font = Enum.Font.FredokaOne,
@@ -586,11 +589,14 @@ local function ButtonFrame(Instance, Title, Description, HolderSize)
 		Size = UDim2.new(1, 0, 0, 25),
 		AutomaticSize = "Y",
 		Name = "Option"
-	})Make("Corner", Frame, UDim.new(0, 6))InsertTheme(Create("UIStroke", Frame, {
+	})Make("Corner", Frame, UDim.new(0, 6))
+	local EdgeStroke = InsertTheme(Create("UIStroke", Frame, {
 		Color = Theme["Color Edge"],
 		Thickness = 1,
+		Transparency = ElementEdgesEnabled and 0 or 1,
 		ApplyStrokeMode = "Border"
 	}), "Edge")
+	table.insert(ElementEdgeStrokes, EdgeStroke)
 
 	LabelHolder = Create("Frame", Frame, {
 		AutomaticSize = "Y",
@@ -870,19 +876,6 @@ function redzlib:MakeWindow(Configs)
 		BackgroundTransparency = 0.55,
 		Name = "Hub"
 }), "Main")
-local RunService = game:GetService("RunService")
-
-local imageUrl = "https://github.com/V7xDEV/Scripts/raw/refs/heads/main/backgroundZ7X.png"
-local fileName = "z7x_background_img.png"
-
-local function GetImage(url, name)
-	if not isfile(name) then
-		local success, data = pcall(function() return game:HttpGet(url) end)
-		if success and data then writefile(name, data) end
-	end
-	return getcustomasset(name)
-end
-
 local WindowBackground = Create("Frame", MainFrame, {
 	Name = "WindowBackground",
 	Size = UDim2.new(1, 0, 1, 0),
@@ -893,72 +886,6 @@ local WindowBackground = Create("Frame", MainFrame, {
 })
 
 Make("Corner", WindowBackground)
-
-local ImageFrame = Instance.new("ImageLabel")
-ImageFrame.Name = "BackgroundImage"
-ImageFrame.Parent = WindowBackground
-ImageFrame.Size = UDim2.new(1, 0, 1, 0)
-ImageFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-ImageFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-ImageFrame.BackgroundTransparency = 1
-ImageFrame.ImageColor3 = Color3.fromRGB(165, 165, 165)
-ImageFrame.ZIndex = 1
-
-Make("Corner", ImageFrame, UDim.new(0, 12))
-
-local DarkOverlay = Instance.new("Frame")
-DarkOverlay.Name = "DarkOverlay"
-DarkOverlay.Size = UDim2.new(1, 0, 1, 0)
-DarkOverlay.Position = UDim2.new(0, 0, 0, 0)
-DarkOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-DarkOverlay.BackgroundTransparency = 0.65
-DarkOverlay.ZIndex = 2
-DarkOverlay.Parent = WindowBackground
-
-Make("Corner", DarkOverlay, UDim.new(0, 12))
-
-task.spawn(function()
-	local asset = GetImage(imageUrl, fileName)
-	if asset then
-		ImageFrame.Image = asset
-	end
-end)
-
-local BorderFrame = Instance.new("Frame")
-BorderFrame.Name = "BorderFrame"
-BorderFrame.Size = UDim2.new(1, 0, 1, 0)
-BorderFrame.Position = UDim2.new(0, 0, 0, 0)
-BorderFrame.BackgroundTransparency = 1
-BorderFrame.ZIndex = 4
-BorderFrame.Parent = WindowBackground
-
-Make("Corner", BorderFrame)
-
-local BorderStroke = Instance.new("UIStroke")
-BorderStroke.Thickness = 5
-BorderStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-BorderStroke.Color = Color3.fromRGB(255, 255, 255)
-BorderStroke.Parent = BorderFrame
-
-local BorderGradient = Instance.new("UIGradient")
-BorderGradient.Color = ColorSequence.new{
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)),
-	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 0, 0)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 0))
-}
-BorderGradient.Rotation = 0
-BorderGradient.Parent = BorderStroke
-
-local borderSpeed = 50
-local borderColorEnabled = true
-local edgesVisible = true
-local bgImageEnabled = true
-
-RunService.Heartbeat:Connect(function(dt)
-	if BorderGradient and borderColorEnabled then
-		BorderGradient.Rotation = (BorderGradient.Rotation + borderSpeed * dt) % 360
-	end
-end)
 
 	Make("Gradient", MainFrame, {
 		Rotation = 45,
@@ -3531,102 +3458,55 @@ end
 			end
 		})
 
-		SettingsTab:AddToggle({
-			Name = "Remember Window Size",
-			Desc = "Save the window size/position between sessions",
-			Default = true,
-			Flag = "RememberWindowSize",
-			Callback = function(enabled)
-				if enabled then
-					redzlib.Save.UISize = {MainFrame.Size.X.Offset, MainFrame.Size.Y.Offset}
-					SaveJson("redz library V5.json", redzlib.Save)
-				end
-			end
-		})
-
-		local skyBlueLow = Color3.fromRGB(0, 140, 255)
-		local skyBlueHigh = Color3.fromRGB(120, 220, 255)
-
-		local glowFrameEnabled = false
-		local glowTitleEnabled = false
+		SettingsTab:AddSection({Name = "Background"})
 
 		local GlowStroke = Make("Stroke", MainFrame, {
 			Thickness = 2,
-			Color = skyBlueLow,
-			Transparency = 1
+			Color = Color3.fromRGB(0, 255, 0),
+			Transparency = 0
 		})
 
-		task.spawn(function()
-			while MainFrame and MainFrame.Parent do
-				local pulse = (math.sin(tick() * 1.2) * 0.5) + 0.5
-				local glowColor = skyBlueLow:Lerp(skyBlueHigh, pulse)
+		local GlowGradient = Instance.new("UIGradient")
+		GlowGradient.Color = ColorSequence.new{
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)),
+			ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 0, 0)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 0))
+		}
+		GlowGradient.Rotation = 0
+		GlowGradient.Parent = GlowStroke
 
-				if glowFrameEnabled then
-					GlowStroke.Color = glowColor
-				end
-				if glowTitleEnabled and Title then
-					Title.TextColor3 = glowColor
-					local SubTitleLbl = Title:FindFirstChild("SubTitle")
-					if SubTitleLbl then
-						SubTitleLbl.TextColor3 = glowColor
-					end
-				end
-				task.wait()
+		local glowSpeed = 50
+		local glowColorEnabled = true
+
+		RunService.Heartbeat:Connect(function(dt)
+			if GlowGradient and glowColorEnabled then
+				GlowGradient.Rotation = (GlowGradient.Rotation + glowSpeed * dt) % 360
 			end
 		end)
 
-		SettingsTab:AddToggle({
-			Name = "Glow Frame ",
-			Flag = "GlowMainFrame",
-			Default = true,
-			Callback = function(enabled)
-				glowFrameEnabled = enabled
-				GlowStroke.Transparency = enabled and 0 or 1
-			end
-		})
-
-		SettingsTab:AddToggle({
-			Name = "Glow Title",
-			Flag = "GlowTitle",
-			Default = false,
-			Callback = function(enabled)
-				glowTitleEnabled = enabled
-				if not enabled and Title then
-					Title.TextColor3 = Theme["Color Theme"]
-					local SubTitleLbl = Title:FindFirstChild("SubTitle")
-					if SubTitleLbl then
-						SubTitleLbl.TextColor3 = Theme["Color Dark Text"]
-					end
-				end
-			end
-		})
-
-		SettingsTab:AddSection({Name = "Background"})
-
-		SettingsTab:AddToggle({
-			Name = "Background Image",
-			Desc = "Show or hide the background image",
-			Default = true,
-			Flag = "BackgroundImageVisible",
-			Callback = function(enabled)
-				bgImageEnabled = enabled
-				ImageFrame.Visible = enabled
-				DarkOverlay.Visible = enabled
-				WindowBackground.BackgroundTransparency = enabled and 0 or 0.75
+		SettingsTab:AddSlider({
+			Name = "Background Transparency",
+			Min = 0,
+			Max = 100,
+			Increase = 5,
+			Default = math.floor(WindowBackground.BackgroundTransparency * 100),
+			Flag = "BackgroundTransparency",
+			Callback = function(value)
+				WindowBackground.BackgroundTransparency = value / 100
 			end
 		})
 
 		SettingsTab:AddToggle({
 			Name = "Stop Edge Coloring",
-			Desc = "Stop the animated color cycle on the outer edge",
+			Desc = "Stop the animated color cycle on the frame's edge",
 			Default = false,
 			Flag = "StopEdgeColoring",
 			Callback = function(enabled)
-				borderColorEnabled = not enabled
+				glowColorEnabled = not enabled
 				if enabled then
-					BorderGradient.Color = ColorSequence.new(Color3.fromRGB(0, 255, 0))
+					GlowGradient.Color = ColorSequence.new(Color3.fromRGB(0, 255, 0))
 				else
-					BorderGradient.Color = ColorSequence.new{
+					GlowGradient.Color = ColorSequence.new{
 						ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)),
 						ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 0, 0)),
 						ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 0))
@@ -3641,30 +3521,32 @@ end
 			Default = false,
 			Flag = "HideEdges",
 			Callback = function(enabled)
-				edgesVisible = not enabled
-				BorderStroke.Transparency = enabled and 1 or 0
+				GlowStroke.Transparency = enabled and 1 or 0
 			end
 		})
 
 		SettingsTab:AddToggle({
-			Name = "Stop Background Bubbles",
-			Desc = "Stop the floating particle bubbles",
-			Default = false,
-			Flag = "StopBubbles",
-			Callback = function(enabled)
-				Window:SetThemeParticles(not enabled)
-			end
-		})
-
-		SettingsTab:AddSection({Name = "Flags"})
-
-		SettingsTab:AddToggle({
-			Name = "Enable Global Flags",
-			Desc = "If disabled, all saved flags fall back to their defaults",
+			Name = "Background Bubbles",
+			Desc = "Show the floating particle bubbles",
 			Default = true,
-			Flag = "GlobalFlagsMaster",
+			Flag = "BackgroundBubbles",
 			Callback = function(enabled)
-				redzlib.FlagsEnabled = enabled
+				Window:SetThemeParticles(enabled)
+			end
+		})
+
+		SettingsTab:AddSection({Name = "Elements"})
+
+		SettingsTab:AddToggle({
+			Name = "Stop Element Edges",
+			Desc = "Stop the edge outline on dropdowns, buttons, textboxes and other elements",
+			Default = false,
+			Flag = "StopElementEdges",
+			Callback = function(enabled)
+				ElementEdgesEnabled = not enabled
+				for _,Stroke in ipairs(ElementEdgeStrokes) do
+					Stroke.Transparency = enabled and 1 or 0
+				end
 			end
 		})
 	end
